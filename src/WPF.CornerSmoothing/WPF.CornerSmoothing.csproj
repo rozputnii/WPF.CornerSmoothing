@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <TargetFrameworks>net6.0-windows;net8.0-windows</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <UpdateAssemblyInfo>false</UpdateAssemblyInfo>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>WPF.CornerSmoothing</PackageId>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/rozputnii/WPF.CornerSmoothing.git</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/rozputnii/WPF.CornerSmoothing</PackageProjectUrl>
+    <Authors>Daniil Rozputnii</Authors>
+    <Description>WPF Border Container with Corner Smoothing (Figma style Corner Smoothing using Squircle)</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryType>git</RepositoryType>
+    <PackageIcon>icon.png</PackageIcon>
+	  <PackageReadmeFile>README.md</PackageReadmeFile>
+	  <PackageTags>net6.0-windows;net8.0-windows;WPF;CornerSmoothing;Squircle</PackageTags>
+  </PropertyGroup>
+
+	<ItemGroup>
+    <!-- Ensure the icon file is included in the package -->
+    <None Include="C:\Users\drozputnii\Documents\WPF.CornerSmoothing\src\WPF.CornerSmoothing\.editorconfig" />
+    <None Include="icon.png" Pack="true" PackagePath="icon.png" />
+  </ItemGroup>
+
+	<ItemGroup>
+	  <EditorConfigFiles Remove="C:\Users\drozputnii\Documents\WPF.CornerSmoothing\src\WPF.CornerSmoothing\.editorconfig" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="..\..\README.md" Pack="true" PackagePath="\" />
+	</ItemGroup>
+</Project>

@@ -1,0 +1,68 @@
+name: PUBLISH NUGET
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
+jobs:
+  setup:
+    runs-on: windows-latest    
+    strategy:
+      matrix:
+        dotnet-version: [6.x, 8.x]
+    steps:
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{matrix.dotnet-version}}
+  
+  publish:
+    runs-on: windows-latest
+    needs: setup
+    env:
+        PROJECT_PATH: '.\src\WPF.CornerSmoothing\WPF.CornerSmoothing.csproj'
+        NUGET_SOURCE: 'https://api.nuget.org/v3/index.json'
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        ARTIFACTS: '.\packages'
+
+    steps:
+      - name: Verify .NET versions
+        run: dotnet --info
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set Version Variable
+        if: ${{ github.ref_type == 'tag' }}
+        shell: pwsh
+        run: |
+          $version = '${{ env.TAG }}' -replace '^v', ''          
+          echo "VERSION=$version" >> $env:GITHUB_ENV
+        env:
+          TAG: ${{ github.ref_name }}
+          RUN_NUMBER: ${{ github.run_number }}
+      
+      - name: Check Version
+        shell: pwsh
+        run: | 
+          if (-not "${{ env.VERSION }}") {
+            Write-Host "VERSION is not defined, stopping job."
+            exit 1
+          }          
+          Write-Host "VERSION is defined as: ${{ env.VERSION }}"
+      
+      - name: Clean
+        run: dotnet clean ${{ env.PROJECT_PATH }} -c Release
+
+      - name: Restore
+        run: dotnet restore ${{ env.PROJECT_PATH }} --no-cache --source ${{ env.NUGET_SOURCE }}
+       
+      - name: Build
+        run: dotnet build ${{ env.PROJECT_PATH }} -c Release --no-restore --property:Version=${{ env.VERSION }}
+
+      - name: Pack
+        run: dotnet pack ${{ env.PROJECT_PATH }} -c Release --no-build -o ${{ env.ARTIFACTS }} --property:Version=${{ env.VERSION }}
+
+      - name: Push
+        run: dotnet nuget push ${{ env.ARTIFACTS }}\WPF.CornerSmoothing.${{ env.VERSION }}.nupkg --api-key ${{ env.NUGET_API_KEY }} --source ${{ env.NUGET_SOURCE }}

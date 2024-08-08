@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35027.167
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WPF.CornerSmoothing", "src\WPF.CornerSmoothing\WPF.CornerSmoothing.csproj", "{D254DAEF-F282-430A-B0BF-9A8855AE9F6D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{27A5B510-89A8-445F-AB95-950C25FA9226}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\cd.yml = .github\workflows\cd.yml
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Demo", "Demo\Demo.csproj", "{75A56936-EF58-41D6-B6ED-BE57640890AC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D254DAEF-F282-430A-B0BF-9A8855AE9F6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D254DAEF-F282-430A-B0BF-9A8855AE9F6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D254DAEF-F282-430A-B0BF-9A8855AE9F6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D254DAEF-F282-430A-B0BF-9A8855AE9F6D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75A56936-EF58-41D6-B6ED-BE57640890AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75A56936-EF58-41D6-B6ED-BE57640890AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75A56936-EF58-41D6-B6ED-BE57640890AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75A56936-EF58-41D6-B6ED-BE57640890AC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DC3C2116-4337-4DBF-92A4-E423C0E47E4A}
+	EndGlobalSection
+EndGlobal
