@@ -6,16 +6,15 @@
         xmlns:cs="clr-namespace:WPF.CornerSmoothing;assembly=WPF.CornerSmoothing"
         mc:Ignorable="d" d:Background="LightGray"
         Title="MainWindow" Height="800" Width="800">
-  <WrapPanel Margin="20" Orientation="Horizontal">
-    <Border Width="200" Height="200" Margin="0"
+  <WrapPanel Margin="20" ItemHeight="300" ItemWidth="300" Orientation="Horizontal">
+    <Border  Margin="0"
             CornerRadius="40" BorderThickness="5"
             BorderBrush="#7F000000"
             Background="LightSalmon"
             />
 
     <cs:SmoothBorder 
-      Width="200" 
-      Height="200" 
+      
       Margin="0"
                     CornerRadius="40" 
                     CornerSmoothing="1"
@@ -26,7 +25,7 @@
                     >
       
     </cs:SmoothBorder>
-    <cs:SmoothBorder Width="200" Height="200" Margin="0"
+    <cs:SmoothBorder  Margin="0"
                     CornerRadius="50"
                     CornerSmoothing="0.6"
                     BorderBrush="#7F000000"
@@ -41,7 +40,7 @@
       </Rectangle>
 
     </cs:SmoothBorder>
-    <cs:SmoothBorder Width="200" Height="200" Margin="0"
+    <cs:SmoothBorder Margin="0"
                              CornerRadius="50"
                              CornerSmoothing="0.6"
                              BorderBrush="#7F000000"
@@ -72,12 +71,13 @@
 
     </cs:SmoothBorder>
 
-    <cs:SmoothBorder 
+    <cs:SmoothBorder ClipContent="False"
                     CornerRadius="50" 
                     CornerSmoothing="0.6"
+                    Padding="0"
                     BorderBrush="#7F000000"
                     BorderThickness="0">
-      <Rectangle Width="200" Height="200" >
+      <Rectangle>
         <Rectangle.Fill>
           <LinearGradientBrush EndPoint="0.5,1" StartPoint="1,0.5">
             <GradientStop Color="#FFFD74C8" />
@@ -87,8 +87,7 @@
       </Rectangle>
 
     </cs:SmoothBorder>
-    <cs:SmoothBorder Width="200"
-                    Height="200"
+    <cs:SmoothBorder 
                     Padding="15"
                     CornerRadius="50"
                     CornerSmoothing="1"
@@ -100,8 +99,7 @@
       <Rectangle Fill="#FF9093FF" />
     </cs:SmoothBorder>
 
-    <cs:SmoothBorder Width="200"
-                     Height="200"
+    <cs:SmoothBorder 
                      CornerRadius="50"
                      CornerSmoothing="1"
                      ClipContent="False"

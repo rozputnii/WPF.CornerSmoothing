@@ -7,15 +7,19 @@ public static class SquirclePathGenerator
 	private const double MinSmoothnessRatio = 0.447;
 	private const double MaxRadiusMultiply = 2.341;
 
-	public static PathGeometry GetPathGeometry(double width, double height, double radius, double smoothness)
+	public static Geometry CreateGeometry(double width, double height, double radius, double smoothness)
 	{
-		var geometryString = GetGeometry(width, height, radius, smoothness);
-		var geometry = Geometry.Parse(geometryString);
+		var geometry = GetGeometry(width, height, radius, smoothness);
+		if (geometry is StreamGeometry sg)
+		{
+			return sg;
+		}
+
 		var pathGeometry = PathGeometry.CreateFromGeometry(geometry);
 		return pathGeometry;
 	}
-
-	private static string GetGeometry(double width, double height, double radius, double smoothPercent)
+	
+	private static Geometry GetGeometry(double width, double height, double radius, double smoothPercent)
 	{
 		if (radius < 0)
 		{
@@ -42,7 +46,8 @@ public static class SquirclePathGenerator
 			radius * radiusMultiply
 		);
 
-		return pathData;
+		var geometry = Geometry.Parse(pathData);
+		return geometry;
 	}
 
 	private static double GetMaxSmoothnessRatio(double radius, double maxRadius)
