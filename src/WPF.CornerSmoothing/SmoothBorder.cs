@@ -116,16 +116,12 @@ public class SmoothBorder : Decorator
 		set => SetValue(ClipContentProperty, value);
 	}
 
-	[Bindable(true)]
-	[Category("Appearance")]
 	public Brush? BorderBrush
 	{
 		get => (Brush?)GetValue(BorderBrushProperty);
 		set => SetValue(BorderBrushProperty, value);
 	}
 
-	[Bindable(true)]
-	[Category("Appearance")]
 	public Brush? Background
 	{
 		get => (Brush?)GetValue(BackgroundProperty);
@@ -189,6 +185,7 @@ public class SmoothBorder : Decorator
 
 		if (!ClipContent)
 		{
+			child.Clip = null;
 			return arrangeSize;
 		}
 

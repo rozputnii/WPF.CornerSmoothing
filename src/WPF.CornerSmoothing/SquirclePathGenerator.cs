@@ -10,15 +10,11 @@ public static class SquirclePathGenerator
 	public static Geometry CreateGeometry(double width, double height, double radius, double smoothness)
 	{
 		var geometry = GetGeometry(width, height, radius, smoothness);
-		if (geometry is StreamGeometry sg)
-		{
-			return sg;
-		}
-
-		var pathGeometry = PathGeometry.CreateFromGeometry(geometry);
-		return pathGeometry;
+		return geometry;
+		//var pathGeometry = PathGeometry.CreateFromGeometry(geometry);
+		//return pathGeometry;
 	}
-	
+
 	private static Geometry GetGeometry(double width, double height, double radius, double smoothPercent)
 	{
 		if (radius < 0)

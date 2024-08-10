@@ -4,120 +4,70 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:cs="clr-namespace:WPF.CornerSmoothing;assembly=WPF.CornerSmoothing"
-        mc:Ignorable="d" d:Background="LightGray"
-        Title="MainWindow" Height="800" Width="800">
-  <WrapPanel Margin="20" ItemHeight="300" ItemWidth="300" Orientation="Horizontal">
-    <Border  Margin="0"
-            CornerRadius="40" BorderThickness="5"
-            BorderBrush="#7F000000"
-            Background="LightSalmon"
-            />
+        mc:Ignorable="d" d:Background="White"
+        Title="MainWindow" SizeToContent="WidthAndHeight">
 
-    <cs:SmoothBorder 
-      
-      Margin="0"
-                    CornerRadius="40" 
-                    CornerSmoothing="1"
-                    Padding="10"
-                    BorderThickness="5" 
-                    BorderBrush="#7F000000"
-                    Background="LightSalmon"
-                    >
-      
-    </cs:SmoothBorder>
-    <cs:SmoothBorder  Margin="0"
-                    CornerRadius="50"
-                    CornerSmoothing="0.6"
-                    BorderBrush="#7F000000"
-                    BorderThickness="20">
-      <Rectangle>
-        <Rectangle.Fill>
-          <LinearGradientBrush EndPoint="0.5,1" StartPoint="1,0.5">
-            <GradientStop Color="#FF74DFFD" />
-            <GradientStop Color="#FFFF9090" Offset="1" />
-          </LinearGradientBrush>
-        </Rectangle.Fill>
-      </Rectangle>
+  <Window.Resources>
+    <LinearGradientBrush x:Key="Background" EndPoint="1,0" StartPoint="0,1" SpreadMethod="Pad">
+      <GradientStop Color="#FFFF91EC" Offset="1" />
+      <GradientStop Color="#FFF7F0CA" />
+    </LinearGradientBrush>
+    <Brush x:Key="BorderBrush">#4C000000</Brush>
+  </Window.Resources>
 
-    </cs:SmoothBorder>
-    <cs:SmoothBorder Margin="0"
-                             CornerRadius="50"
-                             CornerSmoothing="0.6"
-                             BorderBrush="#7F000000"
-                             BorderThickness="20">
-      <Rectangle>
-        <Rectangle.Fill>
-          <LinearGradientBrush EndPoint="0.5,1" StartPoint="1,0.5">
-            <GradientStop Color="#FF74DFFD" />
-            <GradientStop Color="#FFFF9090" Offset="1" />
-          </LinearGradientBrush>
-        </Rectangle.Fill>
-      </Rectangle>
-     
-    </cs:SmoothBorder>
-    <cs:SmoothBorder ClipContent="False"
-                             CornerRadius="50"
-                             CornerSmoothing="0.6"
-                             BorderBrush="#7F000000"
-                             BorderThickness="10">
-      <Rectangle Width="180" Height="180">
-        <Rectangle.Fill>
-          <LinearGradientBrush EndPoint="0.5,1" StartPoint="1,0.5">
-            <GradientStop Color="#FF74DFFD" />
-            <GradientStop Color="#FF91FF90" Offset="1" />
-          </LinearGradientBrush>
-        </Rectangle.Fill>
-      </Rectangle>
+  <StackPanel Margin="20">
+    <WrapPanel Margin="0,0,0,30" Orientation="Horizontal">
+      <Border Height="200" Width="200"
+              CornerRadius="{Binding ElementName=CornerRadius, Path=Value}"
+              BorderThickness="{Binding ElementName=BorderThickness, Path=Value}"
+              Padding="{Binding ElementName=Padding, Path=Value}"
+              BorderBrush="{StaticResource BorderBrush}"
 
-    </cs:SmoothBorder>
+              Background="{StaticResource Background}">
+        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">Border</TextBlock>
+      </Border>
 
-    <cs:SmoothBorder ClipContent="False"
-                    CornerRadius="50" 
-                    CornerSmoothing="0.6"
-                    Padding="0"
-                    BorderBrush="#7F000000"
-                    BorderThickness="0">
-      <Rectangle>
-        <Rectangle.Fill>
-          <LinearGradientBrush EndPoint="0.5,1" StartPoint="1,0.5">
-            <GradientStop Color="#FFFD74C8" />
-            <GradientStop Color="#FF9093FF" Offset="1" />
-          </LinearGradientBrush>
-        </Rectangle.Fill>
-      </Rectangle>
+      <cs:SmoothBorder Height="200" Width="200"
+                       Margin="5,0,0,0"
+                       CornerRadius="{Binding ElementName=CornerRadius, Path=Value}"
+                       CornerSmoothing="{Binding ElementName=CornerSmoothing, Path=Value}"
+                       ClipContent="{Binding ElementName=ClipContent, Path=IsChecked}"
+                       Padding="{Binding ElementName=Padding, Path=Value}"
+                       BorderThickness="{Binding ElementName=BorderThickness, Path=Value}"
+                       BorderBrush="{StaticResource BorderBrush}"
+                       Background="{StaticResource Background}">
+        <Grid>
+          <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">SmoothBorder</TextBlock>
+        </Grid>
+      </cs:SmoothBorder>
 
-    </cs:SmoothBorder>
-    <cs:SmoothBorder 
-                    Padding="15"
-                    CornerRadius="50"
-                    CornerSmoothing="1"
-                    ClipContent="True"
-                    BorderBrush="#7F000000"
-                    BorderThickness="10"
-                    Background="#FFFD74C8"
-                    >
-      <Rectangle Fill="#FF9093FF" />
-    </cs:SmoothBorder>
+      <cs:SmoothBorder Height="200" Width="200"
+                       Margin="5,0,0,0"
+                       CornerRadius="{Binding ElementName=CornerRadius, Path=Value}"
+                       CornerSmoothing="{Binding ElementName=CornerSmoothing, Path=Value}"
+                       ClipContent="{Binding ElementName=ClipContent, Path=IsChecked}"
+                       Padding="{Binding ElementName=Padding, Path=Value}"
+                       BorderThickness="{Binding ElementName=BorderThickness, Path=Value}"
+                       BorderBrush="{StaticResource BorderBrush}"
+                       Background="{StaticResource Background}">
+        <Grid Background="#B28EC4FA">
+          <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">SmoothBorder with content</TextBlock>
+        </Grid>
+      </cs:SmoothBorder>
+    </WrapPanel>
 
-    <cs:SmoothBorder 
-                     CornerRadius="50"
-                     CornerSmoothing="1"
-                     ClipContent="False"
-                     >
-      <cs:SmoothBorder.Background>
-        <DrawingBrush>
-          <DrawingBrush.Drawing>
-            <DrawingGroup>
-              <GeometryDrawing Brush="White">
-                <GeometryDrawing.Geometry>
-                  <RectangleGeometry Rect="0,0,1,1" />
-                </GeometryDrawing.Geometry>
-              </GeometryDrawing>
-              <ImageDrawing ImageSource="background.png" Rect="0,0,1,1" />
-            </DrawingGroup>
-          </DrawingBrush.Drawing>
-        </DrawingBrush>
-      </cs:SmoothBorder.Background>
-    </cs:SmoothBorder>
-  </WrapPanel>
+    <CheckBox x:Name="ClipContent" IsChecked="False">ClipContent</CheckBox>
+
+    <TextBlock>CornerSmoothing: <Run Text="{Binding ElementName=CornerSmoothing, Path=Value}" /></TextBlock>
+    <Slider x:Name="CornerSmoothing" Minimum="0" Maximum="1" Value="1" />
+
+    <TextBlock>CornerRadius: <Run Text="{Binding ElementName=CornerRadius, Path=Value}" /></TextBlock>
+    <Slider x:Name="CornerRadius" Minimum="0" Maximum="100" Value="40" Interval="1" />
+
+    <TextBlock>Padding: <Run Text="{Binding ElementName=Padding, Path=Value}" /></TextBlock>
+    <Slider x:Name="Padding" Minimum="0" Maximum="50" Value="0" Interval="1" />
+
+    <TextBlock>BorderThickness: <Run Text="{Binding ElementName=BorderThickness, Path=Value}" /></TextBlock>
+    <Slider x:Name="BorderThickness" Minimum="0" Maximum="50" Value="10" Interval="1" />
+  </StackPanel>
 </Window>
