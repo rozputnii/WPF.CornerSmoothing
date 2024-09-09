@@ -56,15 +56,7 @@ public class SmoothBorder : Decorator
 	public static readonly DependencyProperty GeometryProperty = DependencyProperty.Register(
 		nameof(Geometry), typeof(Geometry), typeof(SmoothBorder));
 
-	private static bool IsCornerSmoothingValid(object value)
-	{
-		if (value is double smoothness)
-		{
-			return smoothness is >= 0 and <= 1;
-		}
-
-		return false;
-	}
+	private static bool IsCornerSmoothingValid(object value) => value is double and >= 0 and <= 1;
 
 	private static bool IsBorderThicknessValid(object value) => value is Thickness { Left: >= 0 };
 
@@ -206,12 +198,6 @@ public class SmoothBorder : Decorator
 
 	protected virtual Geometry CreateGeometry(Rect rect, double cornerRadius, double cornerSmoothing)
 	{
-		if (cornerSmoothing <= 0)
-		{
-			RectangleGeometry rectangleGeometry = new(rect, cornerRadius, cornerRadius);
-			return rectangleGeometry;
-		}
-
 		var geometry = SquirclePathGenerator.CreateGeometry(
 			rect.Width,
 			rect.Height,

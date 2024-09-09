@@ -1,5 +1,6 @@
 namespace WPF.CornerSmoothing;
 
+using System.Globalization;
 using System.Windows.Media;
 
 public static class SquirclePathGenerator
@@ -89,18 +90,27 @@ public static class SquirclePathGenerator
 	{
 		r1 = Math.Min(r1, r2);
 
-		var path =
-			$"""
-			 M 0,{r2}
-			 C 0,{r1} {r1},0 {r2},0
-			 L {w - r2},0
-			 C {w - r1},0 {w},{r1} {w},{r2}
-			 L {w},{h - r2}
-			 C {w},{h - r1} {w - r1},{h} {w - r2},{h}
-			 L {r2},{h}
-			 C {r1},{h} 0,{h - r1} 0,{h - r2}
-			 L 0,{r2}
-			 """;
+		var path = string.Format(CultureInfo.InvariantCulture,
+			"""
+			M 0,{0}
+			C 0,{1} {1},0 {0},0
+			L {2},0
+			C {3},0 {4},{1} {4},{0}
+			L {4},{5}
+			C {4},{6} {3},{7} {2},{7}
+			L {0},{7}
+			C {1},{7} 0,{6} 0,{5}
+			L 0,{0}
+			""",
+			r2,
+			r1,
+			w - r2,
+			w - r1,
+			w,
+			h - r2,
+			h - r1,
+			h
+		);
 
 		return path.Trim().Replace('\n', ' ');
 	}
