@@ -20,11 +20,11 @@ public class SmoothBorder : Decorator
 
 	public static readonly DependencyProperty CornerSmoothingProperty = DependencyProperty.Register(
 		nameof(CornerSmoothing), typeof(double), typeof(SmoothBorder),
-		new FrameworkPropertyMetadata(0.0, PropertyFlags), IsCornerSmoothingValid);
+		new FrameworkPropertyMetadata(1d, PropertyFlags), IsCornerSmoothingValid);
 
 	public static readonly DependencyProperty CornerRadiusProperty = DependencyProperty.Register(
 		nameof(CornerRadius), typeof(double), typeof(SmoothBorder),
-		new FrameworkPropertyMetadata(0.0, PropertyFlags));
+		new FrameworkPropertyMetadata(0d, PropertyFlags));
 
 	public static readonly DependencyProperty ClipContentProperty
 		= DependencyProperty.Register(nameof(ClipContent), typeof(bool), typeof(SmoothBorder),
@@ -33,7 +33,7 @@ public class SmoothBorder : Decorator
 
 	public static readonly DependencyProperty BorderThicknessProperty
 		= DependencyProperty.Register(nameof(BorderThickness), typeof(Thickness), typeof(SmoothBorder),
-			new FrameworkPropertyMetadata(new Thickness(0), PropertyFlags, OnClearPenCache),
+			new FrameworkPropertyMetadata(new Thickness(0d), PropertyFlags, OnClearPenCache),
 			IsBorderThicknessValid);
 
 	public static readonly DependencyProperty PaddingProperty
@@ -56,9 +56,9 @@ public class SmoothBorder : Decorator
 	public static readonly DependencyProperty GeometryProperty = DependencyProperty.Register(
 		nameof(Geometry), typeof(Geometry), typeof(SmoothBorder));
 
-	private static bool IsCornerSmoothingValid(object value) => value is double and >= 0 and <= 1;
+	private static bool IsCornerSmoothingValid(object value) => value is >= 0d and <= 1d;
 
-	private static bool IsBorderThicknessValid(object value) => value is Thickness { Left: >= 0 };
+	private static bool IsBorderThicknessValid(object value) => value is Thickness { Left: >= 0d };
 
 	private static void OnClearPenCache(DependencyObject d, DependencyPropertyChangedEventArgs e)
 	{
@@ -141,8 +141,8 @@ public class SmoothBorder : Decorator
 		}
 
 		Size childConstraint = new(
-			Math.Max(0.0, constraint.Width - borderSize.Width),
-			Math.Max(0.0, constraint.Height - borderSize.Height)
+			Math.Max(0d, constraint.Width - borderSize.Width),
+			Math.Max(0d, constraint.Height - borderSize.Height)
 		);
 
 		child.Measure(childConstraint);
