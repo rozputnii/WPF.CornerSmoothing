@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	  <TargetFrameworks>net6.0-windows;net8.0-windows</TargetFrameworks>
+	  <TargetFramework>net8.0-windows</TargetFramework>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
@@ -21,7 +21,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageIcon>icon.png</PackageIcon>
 	  <PackageReadmeFile>README.md</PackageReadmeFile>
-	  <PackageTags>net6.0-windows;net8.0-windows;WPF;CornerSmoothing;Squircle</PackageTags>
+	  <PackageTags>net8.0-windows;WPF;CornerSmoothing;Squircle</PackageTags>
   </PropertyGroup>
 
 	<ItemGroup>

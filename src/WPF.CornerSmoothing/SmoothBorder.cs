@@ -10,59 +10,117 @@ using System.Windows.Media;
 /// </summary>
 public class SmoothBorder : Decorator
 {
+	private readonly DrawingVisual _backgroundVisual = new();
+	private readonly DrawingVisual _borderVisual = new();
+	private Thickness _padding;
 	private Geometry? _geometry;
+	private Geometry? _childClipGeometry;
+	private Rect _lastBounds;
+	private double _lastRadius, _lastSmooth;
 	private Pen? _pen;
+
+
+
+	public SmoothBorder()
+	{
+		AddVisualChild(_backgroundVisual);
+		AddLogicalChild(_backgroundVisual);
+
+		AddVisualChild(_borderVisual);
+		AddLogicalChild(_borderVisual);
+	}
 
 	#region Dependency Properties
 
 	private const FrameworkPropertyMetadataOptions PropertyFlags = FrameworkPropertyMetadataOptions.AffectsMeasure |
-																   FrameworkPropertyMetadataOptions.AffectsRender;
+	                                                               FrameworkPropertyMetadataOptions.AffectsRender;
 
 	public static readonly DependencyProperty CornerSmoothingProperty = DependencyProperty.Register(
 		nameof(CornerSmoothing), typeof(double), typeof(SmoothBorder),
-		new FrameworkPropertyMetadata(1d, PropertyFlags), IsCornerSmoothingValid);
+		new FrameworkPropertyMetadata(1d, FrameworkPropertyMetadataOptions.AffectsRender, CornerSmoothingChanged),
+		IsCornerSmoothingValid);
+
+	private static void CornerSmoothingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+	{
+		if (d is SmoothBorder b)
+		{
+			b._cornerSmoothing = e.NewValue is double v ? v : 0.0;
+		}
+	}
 
 	public static readonly DependencyProperty CornerRadiusProperty = DependencyProperty.Register(
 		nameof(CornerRadius), typeof(double), typeof(SmoothBorder),
-		new FrameworkPropertyMetadata(0d, PropertyFlags));
+		new FrameworkPropertyMetadata(0d, FrameworkPropertyMetadataOptions.AffectsRender));
 
 	public static readonly DependencyProperty ClipContentProperty
 		= DependencyProperty.Register(nameof(ClipContent), typeof(bool), typeof(SmoothBorder),
-			new FrameworkPropertyMetadata(true, PropertyFlags));
-
+			new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.AffectsRender));
 
 	public static readonly DependencyProperty BorderThicknessProperty
 		= DependencyProperty.Register(nameof(BorderThickness), typeof(Thickness), typeof(SmoothBorder),
-			new FrameworkPropertyMetadata(new Thickness(0d), PropertyFlags, OnClearPenCache),
+			new FrameworkPropertyMetadata(default(Thickness), PropertyFlags, BorderThicknessChanged),
 			IsBorderThicknessValid);
 
 	public static readonly DependencyProperty PaddingProperty
 		= DependencyProperty.Register(nameof(Padding), typeof(Thickness), typeof(SmoothBorder),
-			new FrameworkPropertyMetadata(new Thickness(), PropertyFlags));
+			new FrameworkPropertyMetadata(default(Thickness), PropertyFlags, OnPaddingChanged));
+
+	private static void OnPaddingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+	{
+		if (d is SmoothBorder b)
+		{
+			b._padding = e.NewValue is Thickness th ? th : default;
+		}
+	}
 
 	public static readonly DependencyProperty BorderBrushProperty
 		= DependencyProperty.Register(nameof(BorderBrush), typeof(Brush), typeof(SmoothBorder),
-			new FrameworkPropertyMetadata(default(Brush?),
+			new FrameworkPropertyMetadata(null,
 				FrameworkPropertyMetadataOptions.AffectsRender |
 				FrameworkPropertyMetadataOptions.SubPropertiesDoNotAffectRender,
-				OnClearPenCache));
+				BorderBrushChanged));
 
 	public static readonly DependencyProperty BackgroundProperty =
 		Panel.BackgroundProperty.AddOwner(typeof(SmoothBorder),
-			new FrameworkPropertyMetadata(default(Brush?),
+			new FrameworkPropertyMetadata(null,
 				FrameworkPropertyMetadataOptions.AffectsRender |
 				FrameworkPropertyMetadataOptions.SubPropertiesDoNotAffectRender));
 
 	public static readonly DependencyProperty GeometryProperty = DependencyProperty.Register(
-		nameof(Geometry), typeof(Geometry), typeof(SmoothBorder));
+		nameof(Geometry), typeof(Geometry), typeof(SmoothBorder),new PropertyMetadata(GeometryChanged));
 
 	private static bool IsCornerSmoothingValid(object value) => value is >= 0d and <= 1d;
+	private static void GeometryChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+	{
+		if (d is SmoothBorder b)
+		{			
+			b._geometry = e.NewValue as Geometry;
+		}
+	}
 
-	private static bool IsBorderThicknessValid(object value) => value is Thickness { Left: >= 0d };
+	private static bool IsBorderThicknessValid(object value)
+	{
+		return value is Thickness { Left: >= 0d, Top: >= 0d, Right: >= 0d, Bottom: >= 0d };
+	}
 
-	private static void OnClearPenCache(DependencyObject d, DependencyPropertyChangedEventArgs e)
+	private Thickness _thickness;
+	private static void BorderThicknessChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 	{
 		var border = (SmoothBorder)d;
+		border._thickness = e.NewValue is Thickness th ? th : default;
+		border._pen = null;
+	}
+
+	private Brush? _brush;
+	private static void BorderBrushChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+	{
+		var border = (SmoothBorder)d;
+
+		if (e.NewValue is Freezable { CanFreeze: true } f)
+			f.Freeze();
+
+		border._brush = e.NewValue is Brush b ? b : null;
+		
 		border._pen = null;
 	}
 
@@ -72,13 +130,14 @@ public class SmoothBorder : Decorator
 
 	public Geometry? Geometry
 	{
-		get => (Geometry?)GetValue(GeometryProperty);
+		get => _geometry;
 		private set => SetValue(GeometryProperty, value);
 	}
 
+	private double _cornerSmoothing;
 	public double CornerSmoothing
 	{
-		get => (double)GetValue(CornerSmoothingProperty);
+		get => _cornerSmoothing;
 		set => SetValue(CornerSmoothingProperty, value);
 	}
 
@@ -92,13 +151,13 @@ public class SmoothBorder : Decorator
 	[Category("Appearance")]
 	public Thickness BorderThickness
 	{
-		get => (Thickness)GetValue(BorderThicknessProperty);
+		get => _thickness;
 		set => SetValue(BorderThicknessProperty, value);
 	}
 
 	public Thickness Padding
 	{
-		get => (Thickness)GetValue(PaddingProperty);
+		get => _padding;
 		set => SetValue(PaddingProperty, value);
 	}
 
@@ -110,7 +169,7 @@ public class SmoothBorder : Decorator
 
 	public Brush? BorderBrush
 	{
-		get => (Brush?)GetValue(BorderBrushProperty);
+		get => _brush;
 		set => SetValue(BorderBrushProperty, value);
 	}
 
@@ -124,21 +183,27 @@ public class SmoothBorder : Decorator
 
 	#region Protected Methods
 
+	protected override int VisualChildrenCount
+		=> base.VisualChildrenCount + 2;
+
+	protected override Visual GetVisualChild(int index)
+	{
+		return index switch
+		{
+			0 => _backgroundVisual,
+			1 => Child,
+			2 => _borderVisual,
+			_ => throw new ArgumentOutOfRangeException(nameof(index))
+		};
+	}
+
 	protected override Size MeasureOverride(Size constraint)
 	{
 		var child = Child;
 
-		var paddingSize = Padding.AsSize();
-		var borderThicknessSize = BorderThickness.AsSize();
+		var borderSize = Padding.AsSize();
 
-		Size borderSize = new(
-			paddingSize.Width + borderThicknessSize.Width,
-			paddingSize.Height + borderThicknessSize.Height);
-
-		if (child == null)
-		{
-			return borderSize;
-		}
+		if (child == null) return borderSize;
 
 		Size childConstraint = new(
 			Math.Max(0d, constraint.Width - borderSize.Width),
@@ -155,49 +220,77 @@ public class SmoothBorder : Decorator
 		return borderSize;
 	}
 
+	private Rect? _prevChildBounds;
+	
+
 	protected override Size ArrangeOverride(Size arrangeSize)
 	{
-		Rect boundRect = new(arrangeSize);
+		var bounds = new Rect(arrangeSize);
 
-		var borderGeometry = CreateGeometry(boundRect, CornerRadius, CornerSmoothing);
+		if (bounds != _lastBounds || !CornerRadius.EqualsWithTolerance(_lastRadius)
+		                          || !CornerSmoothing.EqualsWithTolerance(_lastSmooth))
+		{
+			Geometry = null;
+		}
 
-		Geometry = _geometry = borderGeometry;
+		if (Geometry is null)
+		{
+			Geometry = CreateGeometry(bounds, CornerRadius, CornerSmoothing);
+			_lastBounds = bounds;
+			_lastRadius = CornerRadius;
+			_lastSmooth = CornerSmoothing;
+			_childClipGeometry = null;
+			_prevChildBounds = null;
+		}
 
+		RenderBackground();
+		
 		var child = Child;
-		if (child is null)
+		if (child != null)
 		{
-			return arrangeSize;
+			var childBounds = bounds.DeflateRect(Padding);
+			child.Arrange(childBounds);
+
+			if (ClipContent)
+			{
+				if (childBounds == bounds)
+				{
+					_childClipGeometry = Geometry;
+				}
+				else if (childBounds != _prevChildBounds)
+				{
+					_childClipGeometry = new GeometryGroup
+					{
+						Children = { Geometry },
+						Transform = new TranslateTransform(-childBounds.X, -childBounds.Y)
+					};
+					_childClipGeometry.Freeze();
+				}
+
+				Child.Clip = _childClipGeometry;
+				_prevChildBounds = childBounds;
+			}
+			else
+			{
+				child.Clip = null;
+				_prevChildBounds = null;
+				_childClipGeometry = null;
+			}
 		}
 
-		var childRect = boundRect
-			.DeflateRect(Padding)
-			.DeflateRect(BorderThickness);
-
-		child.Arrange(childRect);
-
-		if (!ClipContent)
-		{
-			child.Clip = null;
-			return arrangeSize;
-		}
-
-		if (childRect == boundRect)
-		{
-			child.Clip = borderGeometry;
-		}
-		else
-		{
-			var childCornerRadius = CornerRadius - Padding.Left - BorderThickness.Left;
-			var childBorderGeometry = CreateGeometry(childRect, childCornerRadius, CornerSmoothing);
-
-			child.Clip = childBorderGeometry;
-		}
-
+		RenderBorder();
 		return arrangeSize;
 	}
-
+	
 	protected virtual Geometry CreateGeometry(Rect rect, double cornerRadius, double cornerSmoothing)
 	{
+		if (cornerSmoothing <= 0)
+		{
+			RectangleGeometry rectangleGeometry = new(rect, cornerRadius, cornerRadius);
+			rectangleGeometry.Freeze();
+			return rectangleGeometry;
+		}
+
 		var geometry = SquirclePathGenerator.CreateGeometry(
 			rect.Width,
 			rect.Height,
@@ -210,31 +303,23 @@ public class SmoothBorder : Decorator
 		return geometry;
 	}
 
-	protected override void OnRender(DrawingContext dc)
+	private void RenderBackground()
 	{
-		if (_geometry is null)
-		{
-			return;
-		}
+		if (Geometry is null || Background is null) return;
 
+		using var dc = _backgroundVisual.RenderOpen();
+		dc.DrawGeometry(Background, null, Geometry);
+	}
 
-		var borderPen = GetPen();
-		if (borderPen == null && Background is null)
-		{
-			return;
-		}
+	private void RenderBorder()
+	{
+		var pen = GetPen();
+		if (pen is null || Geometry is null) return;
 
-		if (borderPen is not null)
-		{
-			dc.PushClip(_geometry);
-		}
-
-		dc.DrawGeometry(Background, borderPen, _geometry);
-
-		if (borderPen is not null)
-		{
-			dc.Pop();
-		}
+		using var dc = _borderVisual.RenderOpen();
+		dc.PushClip(Geometry);
+		dc.DrawGeometry(null, pen, Geometry);
+		dc.Pop();
 	}
 
 	private Pen? GetPen()
@@ -246,11 +331,8 @@ public class SmoothBorder : Decorator
 		}
 
 		var pen = _pen;
-		if (pen is not null)
-		{
-			return pen;
-		}
-
+		if (pen is not null) return pen;
+		
 		pen = new Pen
 		{
 			Brush = BorderBrush,
@@ -258,10 +340,7 @@ public class SmoothBorder : Decorator
 			LineJoin = PenLineJoin.Round
 		};
 
-		if (BorderBrush.IsFrozen)
-		{
-			pen.Freeze();
-		}
+		if (pen.CanFreeze) pen.Freeze();
 
 		_pen = pen;
 
