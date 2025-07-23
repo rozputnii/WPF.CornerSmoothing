@@ -98,10 +98,7 @@ public class SmoothBorder : Decorator
 		}
 	}
 
-	private static bool IsBorderThicknessValid(object value)
-	{
-		return value is Thickness { Left: >= 0d, Top: >= 0d, Right: >= 0d, Bottom: >= 0d };
-	}
+	private static bool IsBorderThicknessValid(object value) => value is Thickness { Left: >= 0d};
 
 	private static void BorderThicknessChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 	{
@@ -177,16 +174,14 @@ public class SmoothBorder : Decorator
 	protected override int VisualChildrenCount
 		=> base.VisualChildrenCount + 2;
 
-	protected override Visual GetVisualChild(int index)
-	{
-		return index switch
+	protected override Visual GetVisualChild(int index) =>
+		index switch
 		{
 			0 => _backgroundVisual,
 			1 => Child,
 			2 => _borderVisual,
 			_ => throw new ArgumentOutOfRangeException(nameof(index))
 		};
-	}
 
 	protected override Size MeasureOverride(Size constraint)
 	{
@@ -296,18 +291,18 @@ public class SmoothBorder : Decorator
 
 	private void RenderBackground()
 	{
+		using var dc = _backgroundVisual.RenderOpen();
 		if (Geometry is null || Background is null) return;
 
-		using var dc = _backgroundVisual.RenderOpen();
 		dc.DrawGeometry(Background, null, Geometry);
 	}
 
 	private void RenderBorder()
 	{
 		var pen = GetPen();
-		if (pen is null || Geometry is null) return;
-
 		using var dc = _borderVisual.RenderOpen();
+		if (pen is null || Geometry is null) return;
+		
 		dc.PushClip(Geometry);
 		dc.DrawGeometry(null, pen, Geometry);
 		dc.Pop();
@@ -325,12 +320,14 @@ public class SmoothBorder : Decorator
 			_pen = null;
 			return null;
 		}
-
+		
 		var pen = _pen;
 		if (pen is not null && _prevBrush == brush && _prevThickness == thickness)
 		{
 			return pen;
 		}
+
+		if (brush is Freezable { CanFreeze: true, IsFrozen: false } f) f.Freeze();
 
 		pen = new Pen
 		{
