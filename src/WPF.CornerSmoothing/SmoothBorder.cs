@@ -103,24 +103,15 @@ public class SmoothBorder : Decorator
 		return value is Thickness { Left: >= 0d, Top: >= 0d, Right: >= 0d, Bottom: >= 0d };
 	}
 
-	private Thickness _thickness;
 	private static void BorderThicknessChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 	{
 		var border = (SmoothBorder)d;
-		border._thickness = e.NewValue is Thickness th ? th : default;
 		border._pen = null;
 	}
 
-	private Brush? _brush;
 	private static void BorderBrushChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 	{
 		var border = (SmoothBorder)d;
-
-		if (e.NewValue is Freezable { CanFreeze: true } f)
-			f.Freeze();
-
-		border._brush = e.NewValue is Brush b ? b : null;
-		
 		border._pen = null;
 	}
 
@@ -151,7 +142,7 @@ public class SmoothBorder : Decorator
 	[Category("Appearance")]
 	public Thickness BorderThickness
 	{
-		get => _thickness;
+		get => (Thickness)GetValue(BorderThicknessProperty);
 		set => SetValue(BorderThicknessProperty, value);
 	}
 
@@ -169,7 +160,7 @@ public class SmoothBorder : Decorator
 
 	public Brush? BorderBrush
 	{
-		get => _brush;
+		get => (Brush?)GetValue(BorderBrushProperty);
 		set => SetValue(BorderBrushProperty, value);
 	}
 
@@ -322,27 +313,37 @@ public class SmoothBorder : Decorator
 		dc.Pop();
 	}
 
+	private Brush? _prevBrush;
+	private Thickness? _prevThickness;
 	private Pen? GetPen()
 	{
-		if (BorderBrush is null || BorderThickness.Left == 0)
+		var brush = BorderBrush;
+		var thickness = BorderThickness;
+
+		if (brush is null || thickness.Left == 0)
 		{
 			_pen = null;
 			return null;
 		}
 
 		var pen = _pen;
-		if (pen is not null) return pen;
-		
+		if (pen is not null && _prevBrush == brush && _prevThickness == thickness)
+		{
+			return pen;
+		}
+
 		pen = new Pen
 		{
-			Brush = BorderBrush,
-			Thickness = BorderThickness.Left * 2, // we are clip part of 1/2 of Thickness
+			Brush = brush,
+			Thickness = thickness.Left * 2, // we are clip part of 1/2 of Thickness
 			LineJoin = PenLineJoin.Round
 		};
 
 		if (pen.CanFreeze) pen.Freeze();
 
 		_pen = pen;
+		_prevBrush = brush;
+		_prevThickness = thickness;
 
 		return pen;
 	}
